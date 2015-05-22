@@ -106,6 +106,10 @@ module Silverpops
       req.params['jsessionid'] = get_token()
     end
 
+    doc = Nokogiri::XML(response.body)
+    doc.xpath("//Envelope/Body/RESULT/SUCCESS").each do |node|
+      return node.content.downcase == "true"
+    end
 
   end
 
