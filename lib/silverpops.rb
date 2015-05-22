@@ -27,8 +27,6 @@ module Silverpops
       }
     end
 
-    #conn_options = { ssl: {verify: false} }
-
     faraday = Faraday.new(:url => get_api_base_uri(), :proxy => Silverpops.configuration.proxy) do |faraday|
       faraday.request :url_encoded
       faraday.adapter  Faraday.default_adapter
@@ -70,7 +68,44 @@ module Silverpops
     
   end
 
-  def self.add_list_member(api_post_id, key_data)
+  def self.add_list_member(database_id, key_data, update_if_found = true, allow_html = true, send_auto_reply = true)
+
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.Envelope {
+        xml.Body {
+          xml.AddRecipient {
+            xml.LIST_ID database_id
+            xml.CREATED_FROM 1
+            xml.SEND_AUTOREPLY send_auto_reply
+            xml.UPDATE_IF_FOUND update_if_found
+            xml.ALLOW_HTML allow_html
+            xml.CONTACT_LISTS ''
+
+            key_data.each do |key, value|
+              xml.COLUMN {
+                xml.NAME key
+                xml.VALUE value
+              }
+            end
+
+          }
+        }
+      }
+    end
+
+    faraday = Faraday.new(:url => get_api_base_uri(), :proxy => Silverpops.configuration.proxy) do |faraday|
+      faraday.request :url_encoded
+      faraday.adapter  Faraday.default_adapter
+    end
+
+    response = faraday.post do |req|
+      req.url '/XMLAPI'
+      req.headers["Content-Type"] = "text/xml"
+      req.headers["Accept"] = "text/xml"
+      req.body = builder.to_xml
+      req.params['jsessionid'] = get_token()
+    end
+
 
   end
 

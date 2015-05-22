@@ -40,6 +40,21 @@ RSpec.describe Silverpops do
     end
   end
 
+  context "#add_list_member" do
+    context "with a valid database id" do
+      it "succeeds and returns true" do
+        data = {
+          "Email" => "tom.holder@simpleweb.co.uk",
+          "Forename" => "Thomas",
+          "Surname" => "Holder"
+        }
+        response = Silverpops.add_list_member ENV['DATABASE_ID'], data
+        expect(response).to eq(true)
+      end
+    end
+
+  end
+
 end
 
 
