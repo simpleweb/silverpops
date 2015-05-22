@@ -92,7 +92,26 @@ module Silverpops
 
     doc = Nokogiri::XML(response.body)
     doc.xpath("//Envelope/Body/RESULT/SUCCESS").each do |node|
-      return node.content.downcase == "true"
+      
+      
+      if node.content.downcase == "true"
+
+        record_data = {}
+
+        doc.xpath("//Envelope/Body/RESULT").each do |data|
+          record_data["Email"] = data.xpath("EMAIL")[0].content
+          record_data["RecipientId"] = data.xpath("RecipientId")[0].content.to_i
+        end
+
+        doc.xpath("//Envelope/Body/RESULT/COLUMNS/COLUMN").each do |data|
+          record_data[data.xpath("NAME")[0].content] = data.xpath("VALUE")[0].content
+        end
+
+        return record_data
+
+      else
+        return false
+      end
     end
 
   end

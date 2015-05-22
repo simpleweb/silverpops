@@ -51,22 +51,10 @@ RSpec.describe Silverpops do
     context "with a known email address" do
       it "responds with the row" do
         response = Silverpops.find_list_member(ENV['DATABASE_ID'], "tom@simpleweb.co.uk")
-        #expect(response).to be_kind_of(Hash)
-        #expect(response).to include("id", "properties")
-        #expect(response["id"]).to be_kind_of(Integer)
+        expect(response).to be_kind_of(Hash)
+        expect(response).to include("RecipientId", "Email", "Forename", "Surname")
+        expect(response["RecipientId"]).to be_kind_of(Integer)
       end
-
-      #context "when additional properties are requested" do
-      #  it "responds with the row with additional properties included" do
-      #    response = Silverpops.find_list_member("tom@simpleweb.co.uk", "email_address")
-      #  #  expect(response).to be_kind_of(Hash)
-      #    expect(response).to include("id", "properties")
-      #    expect(response["id"]).to be_kind_of(Integer)
-      #    expect(response["properties"][0]["propName"]).to eq "email_address"
-      #    expect(response["properties"][0]["value"]).to be_kind_of String
-      #  end
-      #end
-
     end
   end
 
@@ -76,7 +64,7 @@ RSpec.describe Silverpops do
         data = {
           "Email" => "tom.holder@simpleweb.co.uk",
           "Forename" => "Thomas",
-          "Surname" => "Holder"
+          "Surname" => "Holder",
         }
         response = Silverpops.add_list_member ENV['DATABASE_ID'], data
         expect(response).to eq(true)
