@@ -6,8 +6,6 @@ This very simple gem was built to do two things:
 
 2) Subscribe customers to a list (table)
 
-The library implements their attempt at OAuth(!) and uses Redis to cache the access_token.
-
 To use the gem you must configure it like:
 
     Silverpops.configure do |config|
