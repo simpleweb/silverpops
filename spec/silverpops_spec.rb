@@ -33,7 +33,7 @@ RSpec.describe Silverpops do
       context "trying to authenticate with valid credentials" do
         it "succeeds and returns true" do
           response = Silverpops.get_token
-          expect(response).to eq(true)
+          expect(response).to be_an_instance_of(String) 
         end
       end
 

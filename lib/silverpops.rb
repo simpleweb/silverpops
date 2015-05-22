@@ -45,8 +45,14 @@ module Silverpops
 
       doc = Nokogiri::XML(response.body)
       doc.xpath("//Envelope/Body/RESULT/SUCCESS").each do |node|
-        return node.content.downcase == "true"
+        
+        doc.xpath("//Envelope/Body/RESULT/SESSIONID").each do |session|
+          return session.content
+        end
+
       end
+
+      return false
 
     else
       raise RetryException, response.status.to_s + " " + response.body if response.status == 200
