@@ -64,8 +64,37 @@ module Silverpops
     end
   end
 
-  def self.find_list_member(email, prop = '', allow_retry_qty = 3)
+  def self.find_list_member(database_id, email, fields = {})
     
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.Envelope {
+        xml.Body {
+          xml.SelectRecipientData {
+            xml.LIST_ID database_id
+            xml.EMAIL email
+          }
+        }
+      }
+    end
+
+    faraday = Faraday.new(:url => get_api_base_uri(), :proxy => Silverpops.configuration.proxy) do |faraday|
+      faraday.request :url_encoded
+      faraday.adapter  Faraday.default_adapter
+    end
+
+    response = faraday.post do |req|
+      req.url '/XMLAPI'
+      req.headers["Content-Type"] = "text/xml"
+      req.headers["Accept"] = "text/xml"
+      req.body = builder.to_xml
+      req.params['jsessionid'] = get_token()
+    end
+
+    doc = Nokogiri::XML(response.body)
+    doc.xpath("//Envelope/Body/RESULT/SUCCESS").each do |node|
+      return node.content.downcase == "true"
+    end
+
   end
 
   def self.add_list_member(database_id, key_data, update_if_found = true, allow_html = true, send_auto_reply = true)

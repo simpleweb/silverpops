@@ -40,6 +40,36 @@ RSpec.describe Silverpops do
     end
   end
 
+  context "#find_list_member" do
+    context "with an email address that does not exist in cheetahmail" do
+      it "responds with false" do
+        exists = Silverpops.find_list_member(ENV['DATABASE_ID'], Time.now.to_f.to_s + "@simpleweb.co.uk")
+        expect(exists).to eq(false)
+      end
+    end
+
+    context "with a known email address" do
+      it "responds with the row" do
+        response = Silverpops.find_list_member(ENV['DATABASE_ID'], "tom@simpleweb.co.uk")
+        #expect(response).to be_kind_of(Hash)
+        #expect(response).to include("id", "properties")
+        #expect(response["id"]).to be_kind_of(Integer)
+      end
+
+      #context "when additional properties are requested" do
+      #  it "responds with the row with additional properties included" do
+      #    response = Silverpops.find_list_member("tom@simpleweb.co.uk", "email_address")
+      #  #  expect(response).to be_kind_of(Hash)
+      #    expect(response).to include("id", "properties")
+      #    expect(response["id"]).to be_kind_of(Integer)
+      #    expect(response["properties"][0]["propName"]).to eq "email_address"
+      #    expect(response["properties"][0]["value"]).to be_kind_of String
+      #  end
+      #end
+
+    end
+  end
+
   context "#add_list_member" do
     context "with a valid database id" do
       it "succeeds and returns true" do
